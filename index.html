@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux Essentials Quiz</title>
+<style>
+  :root{--bg:#f5f5f3;--card:#fff;--border:#d3d1c7;--border2:#b4b2a9;--text:#1a1a18;--text2:#888780;--hover:#f1efe8;--prog-bg:#e8e6df;--correct-bg:#EAF3DE;--correct-border:#639922;--correct-text:#27500A;--wrong-bg:#FCEBEB;--wrong-border:#A32D2D;--wrong-text:#501313;--reveal-bg:#E6F1FB;--reveal-border:#378ADD;--reveal-text:#0C447C;--selected-bg:#EEEAF8;--selected-border:#534AB7;--selected-text:#1a1a18;--accent:#534AB7;--flag:#D97706;--flag-bg:#FEF3C7;--flag-border:#F59E0B;--flag-text:#92400E;--badge-test-bg:#EAF3DE;--badge-test-text:#27500A;--badge-prac-bg:#E6F1FB;--badge-prac-text:#0C447C;}
+  [data-theme="dark"]{--bg:#000;--card:#111;--border:#333;--border2:#444;--text:#fff;--text2:#aaa;--hover:#1a1a1a;--prog-bg:#222;--correct-bg:#0a2010;--correct-border:#3a7010;--correct-text:#7fcc40;--wrong-bg:#200a0a;--wrong-border:#8a1a1a;--wrong-text:#ff7070;--reveal-bg:#0a1a30;--reveal-border:#1a50a0;--reveal-text:#60a8ff;--selected-bg:#1a1030;--selected-border:#6060cc;--selected-text:#fff;--accent:#7b72d8;--flag:#B45309;--flag-bg:#1a1000;--flag-border:#D97706;--flag-text:#FCD34D;--badge-test-bg:#0a2010;--badge-test-text:#7fcc40;--badge-prac-bg:#0a1a30;--badge-prac-text:#60a8ff;}
+  [data-theme="dark"] .header h1{color:#ffffff;}
+  [data-theme="dark"] .q-text{color:#ffffff;}
+  [data-theme="dark"] .q-counter{color:#aaaaaa;}
+  [data-theme="dark"] body{color:#ffffff;}
+  [data-theme="dark"] .card{color:#ffffff;}
+
+  [data-theme="dark"] .mode-card .title{color:#ffffff;}
+  [data-theme="dark"] .mode-card .desc{color:#d0d0d0;}
+  [data-theme="dark"] .mode-card{background:#111;border-color:#444;}
+
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0;margin:0;transition:background .2s,color .2s;}
+  .card{background:var(--card);padding:2rem;max-width:100%;width:100%;min-height:100vh;transition:background .2s;}
+  .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;}
+  .header h1{font-size:18px;font-weight:500;}
+  .dark-toggle{background:transparent;border:.5px solid var(--border2);border-radius:99px;padding:6px 14px;font-size:13px;cursor:pointer;color:var(--text2);font-family:inherit;transition:background .15s;}
+  .dark-toggle:hover{background:var(--hover);color:var(--text);}
+  .mode-screen{text-align:center;padding:1rem 0 1.5rem;}
+  .mode-screen>p{font-size:14px;color:var(--text2);margin-bottom:2rem;}
+  .warning-banner{background:#FEF3C7;border:.5px solid #F59E0B;border-radius:10px;padding:12px 16px;margin-bottom:1.5rem;font-size:13px;color:#92400E;display:flex;align-items:flex-start;gap:10px;text-align:left;line-height:1.5;}
+  [data-theme="dark"] .warning-banner{background:#1a1000;border-color:#D97706;color:#FCD34D;}
+  .warning-icon{font-size:20px;flex-shrink:0;}
+  .mode-cards{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .mode-card{border:.5px solid var(--border);border-radius:12px;padding:1.5rem 1.25rem;width:200px;cursor:pointer;text-align:left;background:var(--card);transition:background .15s,border-color .15s;}
+  .mode-card:hover{background:var(--hover);border-color:var(--border2);}
+  .mode-card .icon{font-size:22px;margin-bottom:.65rem;}
+  .mode-card .title{font-size:15px;font-weight:500;margin-bottom:.35rem;}
+  .mode-card .desc{font-size:13px;color:var(--text2);line-height:1.5;}
+  .mode-badge{display:inline-block;font-size:11px;font-weight:500;padding:2px 10px;border-radius:99px;margin-bottom:.7rem;}
+  .badge-test{background:var(--badge-test-bg);color:var(--badge-test-text);}
+  .badge-practice{background:var(--badge-prac-bg);color:var(--badge-prac-text);}
+  .progress-bar-bg{background:var(--prog-bg);border-radius:99px;height:6px;margin-bottom:1.25rem;overflow:hidden;}
+  .progress-bar-fill{height:100%;border-radius:99px;background:var(--accent);transition:width .4s ease;}
+  .q-counter{font-size:13px;color:var(--text2);margin-bottom:.35rem;}
+  .q-text{font-size:16px;font-weight:500;margin-bottom:1rem;line-height:1.5;}
+  .options{display:flex;flex-direction:column;gap:9px;}
+  .opt-btn{background:var(--card);border:.5px solid var(--border2);border-radius:8px;padding:11px 15px;text-align:left;font-size:14px;color:var(--text);cursor:pointer;transition:background .15s,border-color .15s;line-height:1.45;font-family:inherit;}
+  .opt-btn:hover{background:var(--hover);}
+  .opt-btn.selected{background:var(--selected-bg);border-color:var(--selected-border);color:var(--selected-text);font-weight:500;}
+  .opt-btn.correct{background:var(--correct-bg);border-color:var(--correct-border);color:var(--correct-text);}
+  .opt-btn.wrong{background:var(--wrong-bg);border-color:var(--wrong-border);color:var(--wrong-text);}
+  .opt-btn.revealed{background:var(--reveal-bg);border-color:var(--reveal-border);color:var(--reveal-text);}
+  .opt-btn.picked{background:var(--selected-bg);border-color:var(--selected-border);color:var(--selected-text);font-weight:500;}
+  .opt-btn:disabled{cursor:default;}
+  .hint{font-size:12px;color:var(--text2);margin-top:.4rem;}
+  .feedback-wrap{margin-top:1rem;min-height:20px;}
+  .feedback{font-size:14px;font-weight:500;}
+  .feedback.correct{color:var(--correct-border);}
+  .feedback.wrong{color:var(--wrong-border);}
+  .feedback.info{color:var(--reveal-border);}
+  .rationale{font-size:13px;color:var(--text2);margin-top:.75rem;line-height:1.55;padding:10px 12px;background:var(--hover);border-radius:7px;border-left:3px solid var(--accent);}
+  .nav{display:flex;justify-content:space-between;align-items:center;margin-top:1.1rem;gap:8px;flex-wrap:wrap;}
+  .nav-left,.nav-right{display:flex;gap:7px;flex-wrap:wrap;}
+  .action-btn{background:transparent;border:.5px solid var(--border2);border-radius:8px;padding:8px 13px;font-size:13px;cursor:pointer;color:var(--text2);font-family:inherit;transition:background .15s;}
+  .action-btn:hover:not(:disabled){background:var(--hover);color:var(--text);}
+  .action-btn:disabled{opacity:.3;cursor:default;}
+  .action-btn.active-toggle{background:var(--reveal-bg);border-color:var(--reveal-border);color:var(--reveal-text);}
+  .flag-btn{background:transparent;border:.5px solid var(--border2);border-radius:8px;padding:8px 13px;font-size:13px;cursor:pointer;color:var(--text2);font-family:inherit;transition:background .15s,border-color .15s;}
+  .flag-btn:hover{background:var(--flag-bg);border-color:var(--flag-border);color:var(--flag-text);}
+  .flag-btn.flagged{background:var(--flag-bg);border-color:var(--flag-border);color:var(--flag-text);font-weight:500;}
+  .next-btn{background:transparent;border:.5px solid var(--border2);border-radius:8px;padding:8px 18px;font-size:14px;cursor:pointer;color:var(--text);font-family:inherit;transition:background .15s;}
+  .next-btn:hover{background:var(--hover);}
+  .submit-btn{background:var(--accent);border:.5px solid var(--accent);border-radius:8px;padding:8px 18px;font-size:14px;cursor:pointer;color:#fff;font-family:inherit;}
+  .submit-btn:hover{opacity:.9;}
+  .num-grid{display:flex;flex-wrap:wrap;gap:4px;margin-top:1.1rem;padding-top:1rem;border-top:.5px solid var(--border);}
+  .num-btn{width:30px;height:28px;border-radius:6px;border:.5px solid var(--border2);background:var(--card);color:var(--text2);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;position:relative;transition:background .12s;}
+  .num-btn:hover{background:var(--hover);color:var(--text);}
+  .num-btn.active{border-color:var(--accent);color:var(--accent);font-weight:700;}
+  .num-btn.num-selected{background:var(--selected-bg);border-color:var(--selected-border);color:var(--selected-text);}
+  .num-btn.done-correct{background:var(--correct-bg);border-color:var(--correct-border);color:var(--correct-text);}
+  .num-btn.done-wrong{background:var(--wrong-bg);border-color:var(--wrong-border);color:var(--wrong-text);}
+  .num-btn.done-revealed{background:var(--reveal-bg);border-color:var(--reveal-border);color:var(--reveal-text);}
+  .num-btn.done-picked{background:var(--selected-bg);border-color:var(--selected-border);color:var(--selected-text);}
+  .num-btn.flagged{background:var(--flag-bg);border-color:var(--flag-border);color:var(--flag-text);}
+  .num-btn.flagged::after{content:'';position:absolute;top:-3px;right:-3px;width:7px;height:7px;border-radius:99px;background:var(--flag);}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:.5rem;font-size:11px;color:var(--text2);}
+  .legend-item{display:flex;align-items:center;gap:4px;}
+  .legend-dot{width:10px;height:10px;border-radius:3px;border:.5px solid;}
+  .score-card{text-align:center;padding:1.5rem .5rem;}
+  .score-num{font-size:52px;font-weight:500;color:var(--accent);}
+  .score-label{font-size:15px;color:var(--text2);margin-bottom:1.25rem;}
+  .score-msg{font-size:15px;margin-bottom:1.25rem;}
+  .summary-row{display:flex;gap:12px;justify-content:center;margin-bottom:1.25rem;flex-wrap:wrap;}
+  .summary-pill{font-size:13px;padding:6px 14px;border-radius:99px;font-weight:500;}
+  .pill-correct{background:var(--correct-bg);color:var(--correct-text);}
+  .pill-wrong{background:var(--wrong-bg);color:var(--wrong-text);}
+  .pill-flag{background:var(--flag-bg);color:var(--flag-text);border:.5px solid var(--flag-border);}
+  .end-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:1.25rem;}
+  .restart-btn{background:transparent;border:.5px solid var(--border2);border-radius:8px;padding:9px 18px;font-size:13px;cursor:pointer;color:var(--text);font-family:inherit;transition:background .15s;}
+  .restart-btn:hover{background:var(--hover);}
+  .missed-list{text-align:left;margin-top:1rem;}
+  .missed-item{background:var(--hover);border-radius:8px;padding:11px 13px;margin-bottom:9px;font-size:13px;border-left:3px solid var(--wrong-border);}
+  .missed-q{font-weight:500;margin-bottom:4px;}
+  .missed-a{color:var(--correct-border);}
+  .practice-end{text-align:center;padding:1.5rem 0;}
+  .practice-end .big{font-size:36px;margin-bottom:.5rem;}
+  .practice-end h2{font-size:18px;font-weight:500;margin-bottom:.5rem;}
+  .practice-end p{font-size:14px;color:var(--text2);margin-bottom:1.5rem;}
+
+  .history-screen{padding:.5rem 0 1.5rem;}
+  .history-screen h2{font-size:16px;font-weight:500;margin-bottom:1rem;}
+  .history-empty{font-size:14px;color:var(--text2);padding:2rem 0;text-align:center;}
+  .history-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:1rem;}
+  .history-table th{text-align:left;padding:8px 10px;border-bottom:.5px solid var(--border2);color:var(--text2);font-weight:500;}
+  .history-table td{padding:9px 10px;border-bottom:.5px solid var(--border);color:var(--text);}
+  .history-table tr:last-child td{border-bottom:none;}
+  .hist-pass{color:var(--correct-border);font-weight:600;}
+  .hist-fail{color:var(--wrong-border);font-weight:600;}
+  .hist-mid{color:var(--flag);font-weight:600;}
+  .clear-hist-btn{background:transparent;border:.5px solid var(--wrong-border);border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer;color:var(--wrong-text);font-family:inherit;}
+  .clear-hist-btn:hover{background:var(--wrong-bg);}
+
+  .coffee-btn{position:fixed;bottom:24px;right:24px;background:#FFDD00;border:none;border-radius:99px;padding:14px 24px;font-size:16px;font-weight:700;color:#000;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:7px;box-shadow:0 4px 14px rgba(0,0,0,.18);z-index:9999;transition:transform .15s,box-shadow .15s;}
+  .coffee-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.22);}
+  .coffee-btn span{font-size:22px;}
+  .multi-note{display:inline-block;font-size:11px;font-weight:500;padding:2px 10px;border-radius:99px;margin-left:6px;background:var(--flag-bg);color:var(--flag-text);}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em;background:var(--hover);padding:1px 5px;border-radius:4px;}
+  .exams-btn{position:fixed;bottom:24px;left:24px;background:var(--accent);border:none;border-radius:99px;padding:14px 24px;font-size:16px;font-weight:700;color:#fff;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:7px;box-shadow:0 4px 14px rgba(0,0,0,.18);z-index:9999;transition:transform .15s,box-shadow .15s;}
+  .exams-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.22);}
+  .exams-btn span{font-size:20px;}
+</style>
+</head>
+<body>
+<div class="card" id="app" data-theme="light">
+  <div class="header">
+    <h1>Linux Essentials Quiz</h1>
+    <button class="dark-toggle" id="theme-btn" onclick="toggleDark()">🌙 Dark</button>
+  </div>
+  <div id="root">
+    <div class="mode-screen">
+      
+      <p>80 questions &nbsp;·&nbsp; Choose your mode</p>
+      <div class="mode-cards">
+        <div class="mode-card" onclick="startMode('test')">
+          <div class="icon">📝</div><div class="title">Test</div>
+          <div class="desc">Select answers freely, flag questions to revisit, then submit for grading.</div>
+        </div>
+        <div class="mode-card" onclick="startMode('practice')">
+          <div class="icon">📚</div><div class="title">Practice</div>
+          <div class="desc">Show/hide answers, flag questions to revisit.No score.</div>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem;">
+        <button class="action-btn" onclick="renderHistory()" style="font-size:13px;padding:8px 16px;color:var(--text2);">📈 View score history</button>
+      </div>
+    </div></div>
+</div>
+<script>
+function toggleDark(){const a=document.getElementById('app');const d=a.getAttribute('data-theme')==='dark';a.setAttribute('data-theme',d?'light':'dark');document.getElementById('theme-btn').textContent=d?'\u{1F319} Dark':'\u2600\uFE0F Light';}
+
+const questions=[
+  {"q": "A user is currently in the directory /home/user/Downloads/ and runs the command <code>ls ../Documents/</code>. Assuming it exists, which directory's content is displayed?", "opts": ["/home/user/Documents/Downloads/", "/home/Documents", "/Documents/", "/home/user/Downloads/Documents/", "/home/user/Documents/"], "ans": 4, "rat": "<code>..</code> refers to the parent directory. The parent of /home/user/Downloads/ is /home/user/, so ../Documents/ resolves to /home/user/Documents/."},
+  {"q": "Which of the following commands output the content of the file <code>Texts 2.txt</code>? (Choose two.)", "opts": ["cat -- Texts 2.txt", "cat 'Texts 2.txt'", "cat 'Texts\\ 2.txt'", "cat Texts\\ 2.txt", "cat |Texts 2.txt|"], "ans": [1, 3], "rat": "A filename containing a space must be quoted or have the space escaped with a backslash so the shell passes it as one argument. Unquoted, <code>Texts 2.txt</code> is treated as two separate files. Inside single quotes the backslash is literal, so option C looks for a file named 'Texts\\ 2.txt'."},
+  {"q": "A directory contains the files a.txt, b.txt and c.csv. What would be the output of the following shell script?<br><code>for file in *.txt; do echo $file; done</code>", "opts": ["a.txt b.txt", "c.csv", "*.txt", "a.txt", "a b"], "ans": 0, "rat": "The glob <code>*.txt</code> expands to every file ending in .txt (a.txt and b.txt). The loop runs once per match and echoes each name, so both are printed. c.csv does not match the pattern."},
+  {"q": "Which of the following commands creates the ZIP archive poems.zip containing all files in the current directory whose names end in .txt?", "opts": ["zip poems.zip *.txt", "cat *.txt | zip poems.zip", "zcat *.txt poems.zip", "zip cfz poems.zip *.txt", "zip *.txt &gt; poems.zip"], "ans": 0, "rat": "The syntax is <code>zip archive-name files...</code>. The shell expands <code>*.txt</code> to the matching file names, and zip adds each one to poems.zip."},
+  {"q": "Which of the following values could be a process ID on Linux?", "opts": ["/bin/bash", "21398", "60b503cd-019e-4300-a7be-922f074ef5ce", "/sys/pid/9a14", "fff3"], "ans": 1, "rat": "A process ID (PID) is a positive integer assigned by the kernel. Paths, UUIDs and hexadecimal-looking strings are not PIDs."},
+  {"q": "Which of the following outputs comes from the command <code>free</code>?", "opts": ["avg-cpu: %user %nice %system %iowait %steal %idle 16.36 0.00 2.99 1.06 0.00 79.59", "total used free shared buff/cache available Mem: 15Gi 2.3Gi 9Gi 910Mi 3.0Gi 11Gi Swap: 2.0Gi 0B 2.0Gi", "21:04 up 14 days, 7:43, 3 users, load average: 0.89, 1.00, 0.99", "Filesystem Size Used Avail Use% Mounted on /dev/nvme0n1p2 468G 33G 412G 8% /", "120K /tmp"], "ans": 1, "rat": "<code>free</code> reports memory usage (total, used, free, shared, buff/cache, available) for RAM and swap. The other outputs come from iostat/cpu stats, uptime, df and du respectively."},
+  {"q": "Which permissions are set on a regular file once the permissions have been modified with the command <code>chmod 654 file.txt</code>?", "opts": ["-rwxrw---x", "-wxr-x--x", "drw-r-xr--", "d--wxr-x--", "-rw-r-xr--"], "ans": 4, "rat": "Each octal digit is read-4, write-2, execute-1. 6 = rw-, 5 = r-x, 4 = r--, giving rw-r-xr--. A leading '-' marks a regular file; 'd' would be a directory."},
+  {"q": "Which of the following programs are web servers? (Choose two.)", "opts": ["Apache", "Dovecot", "Curl", "Postfix", "NGINX"], "ans": [0, 4], "rat": "Apache HTTP Server and NGINX serve web content over HTTP. Dovecot is an IMAP/POP3 mail server, Postfix is an SMTP mail server, and curl is a command-line HTTP client."},
+  {"q": "What are the differences between a private web browser window and a regular web browser window? (Choose three.)", "opts": ["Private web browser windows do not support logins into websites.", "Private web browser windows do not allow printing or storing websites.", "Private web browser windows do not send regular stored cookies.", "Private web browser windows do not keep records in the browser history.", "Private web browser windows do not store cookies persistently."], "ans": [2, 3, 4], "rat": "Private windows start without the regular cookie store, don't record browsing history, and discard any cookies when the window closes. Logging in, printing and saving pages still work normally."},
+  {"q": "Which of the following commands are used to get information on the proper use of <code>ls</code>? (Choose two.)", "opts": ["info ls", "manual ls", "man ls", "usage ls", "option ls"], "ans": [0, 2], "rat": "<code>man</code> displays the manual page and <code>info</code> displays the GNU Info documentation. <code>manual</code>, <code>usage</code> and <code>option</code> are not standard commands."},
+  {"q": "Which of the following <code>tar</code> options handle compression? (Choose two.)", "opts": ["-bz", "-g", "-z2", "-z", "-j"], "ans": [3, 4], "rat": "<code>-z</code> filters the archive through gzip and <code>-j</code> through bzip2. The other options are not valid compression flags (-g is for incremental backups)."},
+  {"q": "What is defined by a Free Software license?", "opts": ["Limits on the purposes for which the licensed software may be used.", "A complete list of libraries required to compile the licensed software.", "Details of the technical documentation each contributor has to provide.", "The programming languages which may be used to extend the licensed program.", "Conditions for modifying and distributing the licensed software."], "ans": 4, "rat": "A Free Software license spells out the conditions under which the software may be modified and redistributed, and grants freedoms such as use for any purpose, study, modification and sharing."},
+  {"q": "Which command copies the contents of the directory /etc/, including all sub-directories, to /root/?", "opts": ["rcp /etc/* /root", "copy /etc /root", "cp -v /etc/* /root", "cp -r /etc/* /root", "cp -R /etc/*.* /root"], "ans": 3, "rat": "<code>cp -r</code> copies directories recursively. Without it, cp skips sub-directories. <code>*.*</code> would only match names containing a dot, and <code>copy</code> and <code>rcp</code> do not do this job."},
+  {"q": "Which of the following statements is true about Free Software?", "opts": ["It must always be available free of charge.", "It only runs on Linux.", "It is developed by volunteers only.", "It is only distributed as a compiled binary.", "It may be modified by anyone using it."], "ans": 4, "rat": "'Free' refers to freedom, not price. Free Software can be modified and redistributed by anyone, runs on many platforms, may be developed commercially, and ships with source code."},
+  {"q": "Most commands on Linux can display information on their usage. How can this information typically be displayed?", "opts": ["By running the command with the option -m or --manpage.", "By running the command with the option -h or --help.", "By running the command with the option /? or /??.", "By running the command with the option /doc or /documentation.", "By running the command with the option ?! or ?=!."], "ans": 1, "rat": "The conventional options are <code>-h</code> and <code>--help</code>, which print a short usage summary. The <code>/?</code> style is a Windows convention."},
+  {"q": "Where is the operating system of a Raspberry Pi stored?", "opts": ["On a removable SD card which is put into the Raspberry Pi.", "On the master device attached to the Raspberry Pi's IDE bus.", "On a Linux extension module connected to the Raspberry Pi's GPIO pins.", "On a read only partition on the Raspberry Pi's firmware, next to the BIOS.", "On rewritable flash storage which is built into the Raspberry Pi."], "ans": 0, "rat": "A Raspberry Pi boots from a removable microSD card holding the OS image. It has no IDE bus or BIOS and no built-in system storage."},
+  {"q": "A directory contains the following three files: <code>texts 1.txt</code>, <code>texts 2.txt</code>, <code>texts 3.csv</code>. Which command copies the two files ending in .txt to the /tmp/ directory?", "opts": ["cp *.txt /tmp/", "cp ??.txt /tmp/", "cp. \\.txt /tmp/", "cp ?.txt /tmp/", "cp $?.txt /tmp/"], "ans": 0, "rat": "<code>*.txt</code> matches any name ending in .txt, including names with spaces. <code>?</code> matches exactly one character, so <code>?.txt</code> and <code>??.txt</code> would not match these longer names."},
+  {"q": "Which of the following devices represents a hard disk partition?", "opts": ["/dev/sata0", "/dev/sda2", "/dev/sda/p2", "/dev/ttyS0", "/dev/part0"], "ans": 1, "rat": "<code>/dev/sda2</code> is the second partition on the first SCSI/SATA disk (sda). /dev/ttyS0 is a serial port."},
+  {"q": "What command displays manual pages?", "opts": ["help -m", "info --manual", "lsman", "manul", "man"], "ans": 4, "rat": "<code>man</code> displays the manual (man) page for a command, for example <code>man ls</code>."},
+  {"q": "Which of the following commands will search for the file foo.txt under the directory /home?", "opts": ["find /home foo.txt", "search /home -file foo.txt", "find /home -file foo.txt", "search /home foo.txt", "find /home -name foo.txt"], "ans": 4, "rat": "<code>find</code> takes a starting directory followed by tests. <code>-name</code> matches the file name. There is no standard <code>search</code> command and <code>-file</code> is not a find test."},
+  {"q": "Which files are the source of the information in the following output? (Choose two.)<br><code>uid=1000(bob) gid=1000(bob) groups=1000(bob),10(wheel),150(wireshark),989(docker),1001(libvirt)</code>", "opts": ["/etc/id", "/etc/passwd", "/var/db/users", "/etc/group", "/home/index"], "ans": [1, 3], "rat": "This is output of <code>id</code>. User name, UID and primary GID come from /etc/passwd; group names and supplementary memberships come from /etc/group."},
+  {"q": "Which of the following programs is a graphical editor for vector graphics?", "opts": ["Python", "MySQL", "NGINX", "Inkscape", "Samba"], "ans": 3, "rat": "Inkscape is a free vector graphics editor. Python is a programming language, MySQL a database, NGINX a web server and Samba a file-sharing suite."},
+  {"q": "Which of the following Linux distributions is derived from Red Hat Enterprise Linux?", "opts": ["CentOS", "Ubuntu", "Raspbian", "Debian", "openSUSE"], "ans": 0, "rat": "CentOS was rebuilt from RHEL's source code. Ubuntu and Raspbian derive from Debian; openSUSE is independent."},
+  {"q": "Which of the following commands puts the lines of the file data.csv into alphabetical order?", "opts": ["abc data.csv", "a..z data.csv", "grep --sort data.csv", "wc -s data.csv", "sort data.csv"], "ans": 4, "rat": "<code>sort</code> orders lines of text alphabetically by default. The other commands don't exist or do something else."},
+  {"q": "Which of the following commands can be used to resolve a DNS name to an IP address?", "opts": ["dnsname", "dns", "iplookup", "host", "query"], "ans": 3, "rat": "<code>host</code> performs DNS lookups (as do <code>dig</code> and <code>nslookup</code>). The other names are not standard Linux commands."},
+  {"q": "How is a new Linux computing instance provisioned in an IaaS cloud?", "opts": ["The standard Linux installer has to be run through a remote console.", "After buying a Linux distribution, its vendor delivers it to a cloud instance.", "A provider-specific configuration file describing the desired installation is uploaded to the cloud provider.", "The cloud hosting organization provides a set of pre-prepared images of popular Linux distributions.", "The installation has to be prepared in a local virtual machine which is then copied to the cloud."], "ans": 3, "rat": "IaaS providers offer ready-made images of popular distributions. You choose an image and the provider launches an instance from it, so no manual installation is needed."},
+  {"q": "The current directory contains the following file:<br><code>-rw-r--r-- 1 root exec 24551 Apr 2 12:36 test.sh</code><br>The file contains a valid shell script, but executing it with <code>./test.sh</code> leads to: <code>bash: ./test.sh: Permission denied</code>. What should be done in order to successfully execute the script?", "opts": ["The script should be run using #!./test.sh instead of ./test.sh.", "The execute bit should be set in the file's permissions.", "The user executing the script should be added to the exec group.", "The SetUID bit should be set in the file's permissions.", "The file's extension should be changed from .sh to .bin."], "ans": 1, "rat": "Nobody has execute permission on the file (no 'x' in rw-r--r--). Running it directly requires the execute bit, for example <code>chmod +x test.sh</code>."},
+  {"q": "What information is stored in /etc/passwd? (Choose three.)", "opts": ["The username", "The user's storage space limit", "The numerical user ID", "The encrypted password", "The user's default shell"], "ans": [0, 2, 4], "rat": "Each line holds username, password placeholder ('x'), UID, GID, comment (GECOS), home directory and login shell. Password hashes live in /etc/shadow, and quotas are stored elsewhere."},
+  {"q": "The ownership of the file doku.odt should be changed. The new owner is named tux. Which command accomplishes this change?", "opts": ["newuser doku.odt tux", "chmod u=tux doku.odt", "passwd doku.odt:tux", "chown tux doku.odt", "transfer tux: doku.odt"], "ans": 3, "rat": "<code>chown</code> (change owner) sets a file's owner: <code>chown tux doku.odt</code>. chmod changes permissions, not ownership."},
+  {"q": "What happens to a file residing outside the home directory when the file owner's account is deleted? (Choose two.)", "opts": ["The user root is set as the new owner of the file.", "During a file system check, the file is moved to /lost+found.", "Ownership and permissions of the file remain unchanged.", "The UID of the former owner is shown when listing the file's details.", "The file is removed from the file system."], "ans": [2, 3], "rat": "Files are tied to the numeric UID, not the account. After deletion the file keeps its owner UID and permissions, and since no name maps to that UID, <code>ls -l</code> shows the number."},
+  {"q": "A new server needs to be installed to host services for a period of several years. Throughout this time, the server should receive important security updates from its Linux distribution. Which of the following Linux distributions meet these requirements? (Choose two.)", "opts": ["Ubuntu Linux non-LTS", "Ubuntu Linux LTS", "Fedora Linux", "Debian GNU/Linux Unstable", "Red Hat Enterprise Linux"], "ans": [1, 4], "rat": "Ubuntu LTS and RHEL offer long-term support with security updates for years. Non-LTS Ubuntu and Fedora are supported only for a short time, and Debian Unstable (sid) gets no stable security support."},
+  {"q": "What are the differences between hard disk drives and solid state disks? (Choose two.)", "opts": ["Solid state disks can store many times as much data as hard disk drives.", "/dev/sda is a hard disk device while /dev/ssda is a solid state disk.", "Solid state disks provide faster access to stored data than hard disks.", "Hard disks can fail due to physical damage, while solid state disks cannot fail.", "Hard disks have a motor and moving parts, solid state disks do not."], "ans": [2, 4], "rat": "SSDs use flash memory with no moving parts, so access is much faster. HDDs have spinning platters and a motor. Both can fail, and both appear as /dev/sdX devices."},
+  {"q": "Which of the following commands sorts the output of the command <code>export-logs</code>?", "opts": ["export-logs &lt; sort", "export-logs | sort", "export-logs &gt; sort", "export-logs &amp; sort", "export-logs &lt;&gt; sort"], "ans": 1, "rat": "The pipe <code>|</code> sends one command's standard output to the next command's standard input. <code>&lt;</code> and <code>&gt;</code> redirect to or from files."},
+  {"q": "Which of the following commands sets the variable USERNAME to the value bob?", "opts": ["var USERNAME=bob", "USERNAME&lt;=bob", "USERNAME=bob", "$USERNAME==bob", "set USERNAME bob"], "ans": 2, "rat": "Shell variable assignment is <code>NAME=value</code> with no spaces around the equals sign and no $ on the left."},
+  {"q": "What is a Linux distribution?", "opts": ["A bundling of the Linux kernel, system utilities and other software.", "An operating system based on Linux but incompatible to the regular Linux kernel.", "A set of changes to Linux which enable Linux to run on another processor architecture.", "The set of rules which governs the distribution of Linux kernel source code.", "The Linux file system as seen from the root account after mounting all file systems."], "ans": 0, "rat": "A distribution packages the Linux kernel with system utilities, libraries, a package manager and applications into a complete, ready-to-use OS."},
+  {"q": "Which of the following commands extracts the contents of the compressed archive file1.tar.gz?", "opts": ["ztar file1.tar.gz", "detar file1.tar.gz", "tar --extract file1.tar.gz", "tar -xzf file1.tar.gz", "tar -czf file1.tar.gz"], "ans": 3, "rat": "<code>-x</code> extracts, <code>-z</code> handles gzip, and <code>-f</code> names the archive. <code>-c</code> would create an archive instead."},
+  {"q": "What is true about the <code>dmesg</code> command? (Choose two.)", "opts": ["It immediately outputs all new messages written to the system journal.", "It traces the execution of a command and shows each step the program carries out.", "It sends messages to the command lines of all current user sessions.", "It displays the content of the Linux kernel's ring buffer.", "It might not display older information because it was overwritten by newer information."], "ans": [3, 4], "rat": "dmesg prints the kernel ring buffer. Because the buffer has a fixed size, newer messages overwrite older ones."},
+  {"q": "Why are web browser cookies considered dangerous?", "opts": ["Cookies support identification and tracking of users.", "Cookies store critical data which is lost when a cookie is deleted.", "Cookies consume significant amounts of storage and can exhaust disk space.", "Cookies can contain and execute viruses and malware.", "Cookies are always public and accessible to anyone on the internet."], "ans": 0, "rat": "Cookies can identify and track users across visits and sites, which is the main privacy concern. They are small text data, not executable code."},
+  {"q": "What is the return value of a shell script after successful execution?", "opts": ["-255", "0", "-1", "255", "1"], "ans": 1, "rat": "By convention an exit status of 0 means success, and any non-zero value indicates an error."},
+  {"q": "Which of the following characters in a shell prompt indicates the shell is running with root privileges?", "opts": ["*", "$", "&amp;", "#", "!"], "ans": 3, "rat": "A <code>#</code> prompt conventionally indicates root; regular users get <code>$</code>."},
+  {"q": "Which package management tool is used in Red Hat-based Linux systems?", "opts": ["rpm", "apt-get", "dpkg", "portage", "packagectl"], "ans": 0, "rat": "Red Hat-based systems use RPM packages (managed with rpm, yum or dnf). apt-get and dpkg are Debian-based, and portage is Gentoo's."},
+  {"q": "Which command displays file names only and no additional information?", "opts": ["ls -lh", "ls -a", "ls -nl", "ls -l", "ls -alh"], "ans": 1, "rat": "<code>ls -a</code> lists names only (including hidden files). Every option with <code>-l</code> uses the long format, adding permissions, owner, size and dates."},
+  {"q": "Which of the following statements are true regarding a typical shell script? (Choose two.)", "opts": ["It has the executable permission bit set.", "It is compiled into a binary file compatible with the current machine architecture.", "It is located in /etc/bash/scripts/.", "It starts with the two character sequence #!.", "It is located in /usr/local/scripts/."], "ans": [0, 3], "rat": "A shell script is a plain-text file that normally has the execute bit set and begins with a shebang (<code>#!</code>) naming its interpreter. It isn't compiled and can live anywhere."},
+  {"q": "Which of the following commands shows the absolute path to the current working directory?", "opts": ["ls -l", "who", "cd ..", "cd ~/home", "pwd"], "ans": 4, "rat": "<code>pwd</code> (print working directory) prints the full absolute path of the current directory."},
+  {"q": "When typing a long command line at the shell, what single character can be used to split a command across multiple lines?", "opts": ["/", "\\"], "ans": 1, "rat": "A backslash at the end of a line escapes the newline, so the shell treats the next line as a continuation of the same command."},
+  {"q": "Which of the following DNS record types hold an IP address? (Choose two.)", "opts": ["A", "AAAA", "MX", "NS", "CNAME"], "ans": [0, 1], "rat": "An A record maps a name to an IPv4 address and an AAAA record to an IPv6 address. MX points to mail servers, NS to name servers and CNAME to another name."},
+  {"q": "What is the preferred source for the installation of new applications in a Linux based operating system?", "opts": ["The distribution's package repository", "The vendor's website", "A CD-ROM disk", "The vendor's version management system", "A retail store"], "ans": 0, "rat": "Distribution repositories provide tested, signed packages with dependency handling and security updates through the package manager."},
+  {"q": "What is the purpose of the PATH environment variable?", "opts": ["It allows the execution of commands without the need to know the location of the executable.", "It indicates the location of the default shell to be used when a user logs in.", "It contains the absolute path to the current directory.", "It specifies the location of a user's home directory.", "It increases security by preventing commands from running in certain locations."], "ans": 0, "rat": "PATH lists directories the shell searches for executables, so you can type <code>ls</code> instead of <code>/bin/ls</code>."},
+  {"q": "What is true about the <code>su</code> command?", "opts": ["It runs a shell or command as another user.", "It locks the root account in specific time frames.", "It can only be used by the user root.", "It is the default shell of the root account.", "It changes the name of the main administrator account."], "ans": 0, "rat": "<code>su</code> (substitute/switch user) runs a shell or command as another user, root by default, after authenticating."},
+  {"q": "Which of the following commands adds the directory /new/dir/ to the PATH environment variable?", "opts": ["PATH=/new/dir:PATH", "export PATH=/new/dir:PATH", "$PATH=/new/dir:$PATH", "export $PATH=/new/dir:$PATH", "export PATH=/new/dir:$PATH"], "ans": 4, "rat": "Assign with no $ on the left, prepend the new directory and append the old value with <code>$PATH</code>, and <code>export</code> it so child processes inherit it."},
+  {"q": "The current directory contains the following file:<br><code>-rwxr-xr-x 1 root root 859688 Feb 7 08:15 test.sh</code><br>Given that the file is a valid shell script, how can this script be executed? (Choose two.)", "opts": ["bash test.sh", "${test.sh}", "./test.sh", "run test.sh", "cmd ./test.sh"], "ans": [0, 2], "rat": "You can pass the script to an interpreter (<code>bash test.sh</code>) or run it by path (<code>./test.sh</code>), which works because the execute bit is set. A bare name needs the directory in PATH."},
+  {"q": "Which of the following is a protocol used for automatic IP address configuration?", "opts": ["SMTP", "LDAP", "DNS", "DHCP", "NFS"], "ans": 3, "rat": "DHCP automatically assigns IP addresses and related settings (gateway, DNS) to clients."},
+  {"q": "Which of the following are typical services offered by public cloud providers? (Choose three.)", "opts": ["Platform as a Service (PaaS)", "Software as a Service (SaaS)", "Internet as a Service (IaaS)", "Graphics as a Service (GaaS)", "Infrastructure as a Service (IaaS)"], "ans": [0, 1, 4], "rat": "The standard models are IaaS (Infrastructure), PaaS (Platform) and SaaS (Software). 'Internet as a Service' and 'Graphics as a Service' are not standard models."},
+  {"q": "Running the command <code>rm Downloads</code> leads to: <code>rm: cannot remove 'Downloads/': Is a directory</code>. Which of the following commands can be used instead to remove Downloads, assuming Downloads is empty? (Choose two.)", "opts": ["undir Downloads", "rmdir Downloads", "rem Downloads", "dir -r Downloads", "rm -r Downloads"], "ans": [1, 4], "rat": "<code>rmdir</code> removes empty directories, and <code>rm -r</code> removes directories recursively. The other commands don't exist or don't delete."},
+  {"q": "What information can be displayed by <code>top</code>?", "opts": ["Existing files, ordered by their size.", "User accounts, ordered by the number of files.", "User groups, ordered by the number of members.", "Running processes, ordered by CPU or RAM consumption.", "User accounts, ordered by the number of logins."], "ans": 3, "rat": "<code>top</code> shows a live view of running processes, sorted by default by CPU usage, and can also sort by memory."},
+  {"q": "Which one of the following statements concerning Linux passwords is true?", "opts": ["All passwords can be decrypted using the system administrator's master password.", "Passwords may be at most six characters long.", "Passwords are only stored in hashed form.", "Users cannot change their password once it has been set.", "Passwords may never start with a non-letter."], "ans": 2, "rat": "Passwords are stored as one-way hashes (in /etc/shadow), so they cannot be decrypted. There is no master password, no six-character limit, and users can change their own passwords."},
+  {"q": "Which of the following directories contains information, documentation and example configuration files for installed software packages?", "opts": ["/var/info/", "/etc/defaults/", "/doc/", "/usr/examples/", "/usr/share/doc/"], "ans": 4, "rat": "<code>/usr/share/doc/</code> holds documentation, README files and example configs for installed packages."},
+  {"q": "Which of the following types of bus can connect hard disk drives with the motherboard?", "opts": ["The Auto bus", "The SATA bus", "The NUMA bus", "The RAM bus", "The CPU bus"], "ans": 1, "rat": "SATA is the common bus for connecting hard drives and SSDs to the motherboard. The other options are not storage buses."},
+  {"q": "Members of a team already have experience using Red Hat Enterprise Linux. For a small hobby project, the team wants to set up a Linux server without paying for a subscription. Which of the following Linux distributions allows the team members to apply as much of their Red Hat Enterprise Linux knowledge as possible?", "opts": ["openSUSE", "Ubuntu Linux LTS", "CentOS", "Debian GNU/Linux", "Raspbian"], "ans": 2, "rat": "CentOS is a free rebuild of RHEL with the same tools (rpm, yum/dnf, systemd, SELinux) and layout, so RHEL skills transfer directly."},
+  {"q": "What is true about the owner of a file?", "opts": ["The owner of a file cannot be changed once it is assigned to an owner.", "The owner of a file always has full permissions when accessing the file.", "Each file is owned by exactly one user and one group.", "When a user is deleted, all files owned by the user disappear.", "The user owning a file must be a member of the file's group."], "ans": 2, "rat": "Every file has exactly one owning user and one owning group. Ownership can be changed by root, the owner may have limited permissions, and files persist after the user is deleted."},
+  {"q": "Which of the following tasks can the command <code>passwd</code> accomplish? (Choose two.)", "opts": ["Create a new user group.", "Lock a user account.", "Change a user's password.", "Change a user's username.", "Create a new user account."], "ans": [1, 2], "rat": "<code>passwd</code> changes a password, and with options such as <code>-l</code> (root) it can lock an account. Creating users and groups uses useradd and groupadd."},
+  {"q": "Which operator in a regular expression matches the preceding character either zero or one time?", "opts": ["$", "*", "+", "?", "%"], "ans": 3, "rat": "<code>?</code> makes the preceding element optional (zero or one). <code>*</code> is zero or more, <code>+</code> is one or more, and <code>$</code> anchors the end of a line."},
+  {"q": "Which of the following examples shows the general structure of a for loop in a shell script?", "opts": ["for *.txt ( echo $i )", "foreach @{file} { echo $i }", "for file in *.txt; do echo $i; done", "for ls *.txt exec {} \\;", "for *.txt as file =&gt; echo $file"], "ans": 2, "rat": "The bash form is <code>for VAR in LIST; do COMMANDS; done</code>."},
+  {"q": "The file script.sh in the current directory contains:<br><code>#!/bin/bash<br>echo $MYVAR</code><br>It is executed with <code>MYVAR=value</code> followed by <code>./script.sh</code>, but the result is an empty line. How should MYVAR be set in order to make script.sh display the content of MYVAR?", "opts": ["MYVAR=value", "export MYVAR=value", "$MYVAR=value", "env MYVAR=value", "!MYVAR=value"], "ans": 1, "rat": "A plain shell variable isn't passed to child processes. <code>export</code> places it in the environment, so the script, which runs as a child process, can see it."},
+  {"q": "What is the UID of the user root?", "opts": ["-1", "0", "255", "1", "65536"], "ans": 1, "rat": "The root superuser always has UID 0."},
+  {"q": "Which command adds the new user tux and creates the user's home directory with default configuration files?", "opts": ["passwd -a tux", "defaultuser tux", "useradd -o default tux", "usercreate tux", "useradd -m tux"], "ans": 4, "rat": "<code>useradd -m</code> creates the user and their home directory, populated from /etc/skel."},
+  {"q": "Which of the following keys can be pressed to exit <code>less</code>?", "opts": ["e", "l", "!", "q", "x"], "ans": 3, "rat": "Pressing <code>q</code> quits less."},
+  {"q": "Which of the following directories must be mounted with read and write access if it resides on its own dedicated file system?", "opts": ["/var", "/lib", "/etc", "/usr", "/opt"], "ans": 0, "rat": "/var holds variable data (logs, spool, caches) that is constantly written by the system, so it must be writable. /usr and /opt may be read-only."},
+  {"q": "Reverse DNS assigns hostnames to IP addresses. How is the name of the IP address 198.51.100.165 stored on a DNS server?", "opts": ["In the ARPA record for 165.100.51.198.rev.", "In the A record for 165.100.51.198.ipv4.arpa.", "In the PTR record for 165.100.51.198.in-addr.arpa.", "In the RNAME record for 198-51-100-165.rev.arpa.", "In the REV record for arpa.in-addr.198.51.100.165."], "ans": 2, "rat": "Reverse lookups use PTR records in the in-addr.arpa zone, with the IPv4 octets written in reverse order."},
+  {"q": "Which statements about the directory <code>/etc/skel</code> are correct? (Choose two.)", "opts": ["The personal user settings of root are stored in this directory.", "The directory contains the global settings for the Linux system.", "The directory contains a default set of configuration files used by the useradd command.", "The files from the directory are copied to the home directory of a new user when the account is created.", "The files from the directory are copied to the home directory of the new user when starting the system."], "ans": [2, 3], "rat": "/etc/skel is the 'skeleton' directory of default files (such as .bashrc) that useradd copies into a new user's home directory at account creation."},
+  {"q": "What keyword is used in a shell script to begin a loop? (Choose the single keyword.)", "opts": ["forloop", "for"], "ans": 1, "rat": "<code>for</code> begins a loop in shell scripts (<code>while</code> and <code>until</code> also exist). <code>forloop</code> is not a keyword."},
+  {"q": "What is true about a recursive directory listing?", "opts": ["It includes the content of sub-directories.", "It includes a preview of content for each file in the directory.", "It includes ownership information for the files.", "It includes details of file system internals, such as inodes.", "It includes the permissions of the directory listed."], "ans": 0, "rat": "A recursive listing (<code>ls -R</code>) descends into every sub-directory and lists its content too."},
+  {"q": "What can be found in the /proc/ directory?", "opts": ["One directory per installed program.", "One log file per running service.", "One directory per installed program.", "One file per existing user account.", "One directory per running process."], "ans": 4, "rat": "/proc is a virtual file system exposing kernel and process information, with one numeric directory per running process (named by PID)."},
+  {"q": "Which of the following statements regarding Linux hardware drivers is correct?", "opts": ["Drivers are downloaded from the vendor's driver repository when a new device is attached.", "Drivers are regular Linux programs which have to be run by the user who wants to use a device.", "Drivers are either compiled into the Linux kernel or are loaded as kernel modules.", "Drivers are not used by Linux because the BIOS handles all access to hardware on behalf of Linux.", "Drivers are stored on their devices and are copied by the Linux kernel when a new device is attached."], "ans": 2, "rat": "Linux drivers are part of the kernel, either built in or loaded on demand as kernel modules (<code>lsmod</code>, <code>modprobe</code>)."},
+  {"q": "Which of the following commands finds all lines in the file operating-systems.txt which contain the term linux, regardless of the case?", "opts": ["cut [Ll][Ii][Nn][Uu][Xx] operating-systems.txt", "igrep linux operating-systems.txt", "less -i linux operating-systems.txt", "cut linux operating-systems.txt", "grep -i linux operating-systems.txt"], "ans": 4, "rat": "<code>grep</code> prints matching lines, and <code>-i</code> makes the match case-insensitive."},
+  {"q": "What parameter of <code>ls</code> prints a recursive listing of a directory's content?", "opts": ["-R", "-r", "-a", "-d"], "ans": 0, "rat": "<code>ls -R</code> lists directories recursively. Lowercase <code>-r</code> only reverses the sort order."},
+  {"q": "Which of the following permissions are set on the /tmp/ directory?", "opts": ["r-xr-X--t", "rwxrwxrwt", "rwSrw-rw-", "rwxrwS---", "rwX"], "ans": 1, "rat": "/tmp is world-writable with the sticky bit, shown as <code>rwxrwxrwt</code> (mode 1777), so users can only delete their own files there."},
+  {"q": "Which of the following commands creates an archive file work.tar from the contents of the directory ./work/?", "opts": ["tar -cf work.tar ./work/", "tar --new work.tar ./work/", "tar --create work.tgz --content ./work/", "tar work.tar &lt; ./work/", "tar work &gt; work.tar"], "ans": 0, "rat": "<code>tar -cf archive.tar path</code> creates (<code>-c</code>) an archive file (<code>-f</code>) from the given directory."},
+  {"q": "Which of the following outputs could stem from the command <code>last</code>?", "opts": ["Last login: Fri Mar 23 10:56:39 2018 from server.example.com", "1 ls 2 cat text.txt 3 logout", "root tty2 Wed May 17 21:11 - 21:11 (00:00)", "Password for user last changed at Sat Mar 31 16:38:57 EST 2018", "EXT4-fs(dm7): mounted filesystem with ordered data mode. Opts: (null)"], "ans": 2, "rat": "<code>last</code> lists previous logins: user, terminal, login time, logout time and session duration."},
+  {"q": "What is true about links in a Linux file system?", "opts": ["A hard link can only point to a directory and never to a file.", "Only the root user can create hard links.", "When the target of the symbolic link is moved, the link is automatically updated.", "A symbolic link can only point to a file and not to a directory.", "A symbolic link can point to a file on another file system."], "ans": 4, "rat": "A symbolic link stores a path, so it can point to files or directories on any file system. Hard links can't cross file systems, and a symlink breaks if its target is moved."}
+];
+
+const HIST_KEY='linuxEssentialsQuizHistory';
+const L=i=>String.fromCharCode(65+i);
+const isMulti=q=>Array.isArray(q.ans);
+const ansArr=q=>isMulti(q)?q.ans:[q.ans];
+const NUMW=['','one','two','three','four','five'];
+const fmtAns=q=>ansArr(q).map(i=>L(i)+') '+q.opts[i]).join('<br>');
+const fmtSel=(q,sel)=>sel.slice().sort((a,b)=>a-b).map(i=>L(i)+') '+q.opts[i]).join('<br>');
+const isCorrect=(q,sel)=>{if(!sel||!sel.length)return false;const a=ansArr(q);return sel.length===a.length&&a.every(x=>sel.includes(x));};
+const answered=s=>s&&s.length>0;
+function toggleSel(q,arr,i){
+  arr=arr?arr.slice():[];
+  if(!isMulti(q))return [i];
+  const k=arr.indexOf(i);
+  if(k>=0){arr.splice(k,1);}
+  else{arr.push(i);if(arr.length>q.ans.length)arr.shift();}
+  return arr;
+}
+
+const originalQuestions=[...questions];
+let activeQuestions=[...questions];
+let mode=null,current=0;
+let testState=activeQuestions.map(()=>null);
+let practiceState=activeQuestions.map(()=>({picked:[],showAnswer:false}));
+let flagged=activeQuestions.map(()=>false);
+let testGraded=false;
+
+function resetState(){current=0;testState=activeQuestions.map(()=>null);practiceState=activeQuestions.map(()=>({picked:[],showAnswer:false}));flagged=activeQuestions.map(()=>false);testGraded=false;}
+
+function numGrid(){
+  const btns=activeQuestions.map((_,i)=>{
+    let cls='num-btn';
+    const isFlagged=flagged[i];
+    if(i===current)cls+=' active';
+    else if(isFlagged)cls+=' flagged';
+    else if(mode==='test'){
+      if(testGraded){cls+=isCorrect(activeQuestions[i],testState[i])?' done-correct':' done-wrong';}
+      else if(answered(testState[i]))cls+=' num-selected';
+    } else {
+      const ps=practiceState[i];
+      if(ps.showAnswer)cls+=' done-revealed';
+      else if(ps.picked.length)cls+=' done-picked';
+    }
+    return `<button class="${cls}" onclick="jumpTo(${i})">${i+1}</button>`;
+  }).join('');
+  const flagCount=flagged.filter(Boolean).length;
+  return `<div class="num-grid">${btns}</div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--flag-bg);border-color:var(--flag-border);"></div><span>&#127988; Flagged for review${flagCount>0?' ('+flagCount+')':''}</span></div>
+      ${mode==='test'&&!testGraded?'<div class="legend-item"><div class="legend-dot" style="background:var(--selected-bg);border-color:var(--selected-border);"></div><span>Answered</span></div>':''}
+    </div>`;
+}
+function jumpTo(i){current=i;render();}
+
+function renderHistory(){
+  const root=document.getElementById('root');
+  const history=JSON.parse(localStorage.getItem(HIST_KEY)||'[]');
+  const rows=history.length?history.map((e,i)=>`
+    <tr>
+      <td>${history.length-i}</td>
+      <td>${e.date} ${e.time}</td>
+      <td class="${e.pct>=90?'hist-pass':e.pct>=70?'hist-mid':'hist-fail'}">${e.score}/${e.total} &nbsp;(${e.pct}%)</td>
+      <td>${e.wrong}</td>
+      <td>${e.unanswered}</td>
+    </tr>`).join(''):'';
+  const emptyMsg=history.length?'':`<div class="history-empty">No results yet &mdash; take a test first!</div>`;
+  const tableHtml=history.length?`<table class="history-table">
+    <thead><tr><th>#</th><th>Date &amp; Time</th><th>Score</th><th>Wrong</th><th>Skipped</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <button class="clear-hist-btn" onclick="clearHistory()">&#128465; Clear history</button>`:'';
+  root.innerHTML=`<div class="history-screen">
+    <h2>&#128200; Score History</h2>
+    ${emptyMsg}${tableHtml}
+    <div style="margin-top:1.25rem;">
+      <button class="action-btn" onclick="renderModeSelect()">&#8592; Back to menu</button>
+    </div>
+  </div>`;
+}
+function clearHistory(){
+  if(confirm('Clear all saved results?')){localStorage.removeItem(HIST_KEY);renderHistory();}
+}
+function renderModeSelect(){
+  document.getElementById('root').innerHTML=`
+    <div class="mode-screen">
+      <p>${originalQuestions.length} questions &nbsp;&middot;&nbsp; Choose your mode</p>
+      <div class="mode-cards">
+        <div class="mode-card" onclick="startMode('test')">
+          <div class="icon">&#128221;</div><div class="title">Test</div>
+          <div class="desc">Select answers freely, flag questions to revisit, then submit for grading.</div>
+        </div>
+        <div class="mode-card" onclick="startMode('practice')">
+          <div class="icon">&#128218;</div><div class="title">Practice</div>
+          <div class="desc">Show/hide answers, flag questions to revisit. No score.</div>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem;">
+        <button class="action-btn" onclick="renderHistory()" style="font-size:13px;padding:8px 16px;color:var(--text2);">&#128200; View score history</button>
+      </div>
+    </div>`;
+}
+function startMode(m){mode=m;if(m==="test"){const copy=[...originalQuestions];for(let i=copy.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]];}activeQuestions=copy;}else{activeQuestions=[...originalQuestions];}resetState();render();}
+
+function render(){
+  const root=document.getElementById('root');
+  if(mode==='test'&&testGraded&&current>=activeQuestions.length){renderTestResults();return;}
+  if(mode==='practice'&&current>=activeQuestions.length){renderPracticeEnd();return;}
+  const q=activeQuestions[current];
+  const multi=isMulti(q);
+  const pct=Math.round((current/questions.length)*100);
+  const isLast=current===activeQuestions.length-1;
+  const isFlagged=flagged[current];
+  const A=ansArr(q);
+  let optHtml='',fbText='',fbCls='feedback',practiceControls='',rationaleHtml='',navRight='',hint='';
+
+  if(mode==='test'){
+    const sel=testState[current]||[];
+    optHtml=q.opts.map((o,i)=>{
+      let cls='opt-btn';
+      if(testGraded){if(A.includes(i))cls+=' correct';else if(sel.includes(i))cls+=' wrong';}
+      else if(sel.includes(i))cls+=' selected';
+      return `<button class="${cls}" ${testGraded?'disabled':''} onclick="testPick(${i})">${L(i)}) ${o}</button>`;
+    }).join('');
+    if(testGraded){
+      if(isCorrect(q,sel)){fbText='&#10003; Correct!';fbCls+=' correct';}
+      else if(!sel.length){fbText='Not answered';fbCls+=' info';}
+      else{fbText='&#10007; Incorrect &mdash; correct:<br>'+fmtAns(q);fbCls+=' wrong';}
+      rationaleHtml=`<div class="rationale"><strong>Rationale:</strong> ${q.rat}</div>`;
+    } else {hint=`<div class="hint">${multi?'Select '+NUMW[A.length]+' answers':'Select an answer'} &mdash; you can change it before submitting</div>`;}
+    if(isLast&&!testGraded){navRight=`<button class="action-btn" ${current===0?'disabled':''} onclick="prev()">&larr; Back</button><button class="submit-btn" onclick="submitTest()">Submit all &rarr;</button>`;}
+    else{navRight=`<button class="action-btn" ${current===0?'disabled':''} onclick="prev()">&larr; Back</button><button class="next-btn" onclick="next()">${isLast&&testGraded?'Results &rarr;':'Next &rarr;'}</button>`;}
+  } else {
+    const ps=practiceState[current];
+    optHtml=q.opts.map((o,i)=>{
+      let cls='opt-btn';
+      if(ps.showAnswer&&A.includes(i))cls+=' revealed';
+      if(ps.picked.includes(i)&&!(ps.showAnswer&&A.includes(i)))cls+=' picked';
+      return `<button class="${cls}" onclick="practicePick(${i})">${L(i)}) ${o}</button>`;
+    }).join('');
+    if(multi)hint=`<div class="hint">Select ${NUMW[A.length]} answers</div>`;
+    if(ps.showAnswer){
+      fbText='Answer:<br>'+fmtAns(q);fbCls+=' info';
+      rationaleHtml=`<div class="rationale"><strong>Rationale:</strong> ${q.rat}</div>`;
+      practiceControls=`<button class="action-btn active-toggle" onclick="toggleShowAnswer()">Hide answer</button>`;
+    } else if(ps.picked.length){
+      fbText='Selected:<br>'+fmtSel(q,ps.picked);fbCls+=' info';
+      practiceControls=`<button class="action-btn" onclick="toggleShowAnswer()">Show answer</button>`;
+    } else {
+      practiceControls=`<button class="action-btn" onclick="toggleShowAnswer()">Show answer</button>`;
+    }
+    navRight=`<button class="action-btn" ${current===0?'disabled':''} onclick="prev()">&larr; Back</button><button class="next-btn" onclick="next()">${isLast?'Finish &rarr;':'Next &rarr;'}</button>`;
+  }
+
+  const badge=mode==='practice'?'<span class="mode-badge badge-practice">Practice</span>':'<span class="mode-badge badge-test">Test</span>';
+  const multiBadge=multi?`<span class="multi-note">Choose ${NUMW[A.length]}</span>`:'';
+  root.innerHTML=`
+    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+    ${badge}${multiBadge}
+    <div class="q-counter">Question ${current+1} of ${questions.length}</div>
+    <div class="q-text">${q.q}</div>
+    <div class="options">${optHtml}</div>
+    ${hint}
+    <div class="feedback-wrap"><div class="${fbCls}">${fbText}</div></div>
+    ${rationaleHtml}
+    <div class="nav">
+      <div class="nav-left">
+        <button class="action-btn" onclick="backToMenu()">&#8862; Menu</button>
+        <button class="${isFlagged?'flag-btn flagged':'flag-btn'}" onclick="toggleFlag()">&#127988; ${isFlagged?'Flagged':'Flag'}</button>
+        ${practiceControls}
+      </div>
+      <div class="nav-right">${navRight}</div>
+    </div>
+    ${numGrid()}`;
+}
+
+function testPick(i){if(testGraded)return;const q=activeQuestions[current];const r=toggleSel(q,testState[current],i);testState[current]=r.length?r:null;render();}
+
+function saveResult(score, total, wrong, unanswered){
+  const pct=Math.round((score/total)*100);
+  const now=new Date();
+  const entry={date:now.toLocaleDateString(),time:now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}),score,total,wrong,unanswered,pct};
+  let history=[];
+  try{history=JSON.parse(localStorage.getItem(HIST_KEY)||'[]');}catch(e){}
+  history.unshift(entry);
+  if(history.length>20) history.pop();
+  try{localStorage.setItem(HIST_KEY, JSON.stringify(history));}catch(e){}
+}
+function submitTest(){testGraded=true;current=0;flagged=activeQuestions.map(()=>false);render();}
+function practicePick(i){const q=activeQuestions[current];practiceState[current].picked=toggleSel(q,practiceState[current].picked,i);render();}
+function toggleShowAnswer(){practiceState[current].showAnswer=!practiceState[current].showAnswer;render();}
+function toggleFlag(){flagged[current]=!flagged[current];render();}
+function next(){current++;render();}
+function prev(){if(current>0){current--;render();}}
+function backToMenu(){mode=null;renderModeSelect();}
+
+function renderTestResults(){
+  const root=document.getElementById('root');
+  const score=testState.filter((s,i)=>isCorrect(activeQuestions[i],s)).length;
+  const wrong=testState.filter((s,i)=>answered(s)&&!isCorrect(activeQuestions[i],s)).length;
+  const unanswered=testState.filter(s=>!answered(s)).length;
+  const stillFlagged=flagged.filter(Boolean).length;
+  const pct=Math.round((score/activeQuestions.length)*100);
+  saveResult(score,activeQuestions.length,wrong,unanswered);
+  const msg=pct>=90?'&#127881; Excellent work!':pct>=70?'&#128077; Good job &mdash; keep reviewing!':'&#128218; Keep studying &mdash; you\'ve got this!';
+  const missedItems=activeQuestions.map((q,i)=>!isCorrect(q,testState[i])?{q:q.q,correct:fmtAns(q)}:null).filter(Boolean);
+  const missedHtml=missedItems.length?'<div class="missed-list">'+missedItems.map(m=>`<div class="missed-item"><div class="missed-q">${m.q}</div><div class="missed-a">&#10003; ${m.correct}</div></div>`).join('')+'</div>':'';
+  root.innerHTML=`<div class="score-card"><div class="score-num">${score}/${questions.length}</div><div class="score-label">${pct}% correct</div>
+    <div class="summary-row">
+      <span class="summary-pill pill-correct">&#10003; ${score} correct</span>
+      <span class="summary-pill pill-wrong">&#10007; ${wrong} wrong</span>
+      ${unanswered?`<span class="summary-pill" style="background:var(--hover);color:var(--text2)">&#8212; ${unanswered} skipped</span>`:''}
+      ${stillFlagged?`<span class="summary-pill pill-flag">&#127988; ${stillFlagged} flagged</span>`:''}
+    </div>
+    <div class="score-msg">${msg}</div>
+    <div class="end-btns">
+      <button class="restart-btn" onclick="reviewTest()">Review answers</button>
+      <button class="restart-btn" onclick="startMode('test')">Retake test</button>
+      <button class="restart-btn" onclick="startMode('practice')">Practice mode</button>
+      <button class="restart-btn" onclick="backToMenu()">Menu</button>
+    </div>
+    ${missedItems.length?'<p style="font-size:13px;color:var(--text2);margin-top:1.5rem;text-align:left;font-weight:500;">Questions you missed:</p>'+missedHtml:''}</div>`;
+}
+function reviewTest(){current=0;render();}
+function renderPracticeEnd(){
+  document.getElementById('root').innerHTML=`<div class="practice-end"><div class="big">&#128218;</div><h2>Practice complete!</h2><p>You reviewed all ${activeQuestions.length} questions.</p><div class="end-btns"><button class="restart-btn" onclick="startMode('practice')">Practice again</button><button class="restart-btn" onclick="startMode('test')">Take the test</button><button class="restart-btn" onclick="backToMenu()">Menu</button></div></div>`;
+}
+
+renderModeSelect();
+</script>
+
+  <a class="exams-btn" href="https://wguexams.github.io/"><span>📚</span> Other exams</a>
+
+  <a class="coffee-btn" href="https://buymeacoffee.com/playmaker777" target="_blank" rel="noopener">
+    <span>☕</span> Buy me a coffee
+  </a>
+
+</body></html>
